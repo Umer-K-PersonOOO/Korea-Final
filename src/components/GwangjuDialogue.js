@@ -40,7 +40,6 @@ export default function GwangjuDialogue({ onGuess }) {
   // Typewriter effect for the current identity line
   useEffect(() => {
     if (!isTyping && currentLine < dialogueScript.length) {
-      const newLine = dialogueScript[currentLine];
       setChatHistory((prev) => [
         ...prev,
         { speaker: "identity", text: "", isOriginal: true },
