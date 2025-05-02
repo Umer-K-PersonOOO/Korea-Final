@@ -2,26 +2,27 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "The ██████████ was an era when the deaths of hundreds and the cries of tens of thousands were ignored and rationalized. Voices seeking truth were violated. The majority turned their backs, silent under terror and falsehood.",
-  "Intellect, conscience, and morality were pushed aside by violence. Songs captured the despair: 'The day is dark and the night is long... our brothers are tired of falsehood and deception.'",
-  "Even God could not speak or hear. Was He dead, crying in an alley, or buried under garbage? Birds, too, had abandoned ██████████. One student cried out, 'Could there ever be another moment in modern Korean history where hope and despair intersected so extremely?'",
+  "I thank you for giving me this chance to share my anger, my shame.",
+  "Sometimes I am still that 14-year-old girl taken by soldiers in the night.",
+  "They beat me unconscious. I awoke on a ship with 300 soldiers.",
+  "I fought, but I was silenced. I was covered in blood and fear.",
+  "This story is not just mine. It belongs to all who were violated and silenced."
 ];
 
-// Prewritten hints and responses
 const hints = [
   {
-    player: "Sounds rough, but what do you think of the minjung movement?",
+    player: "Who hurt you?",
     identity:
-      "Minjung movement? I am not sure if I know what you are talking about.",
+      "Japanese soldiers. They took me when I was just a child. We were called 'comfort women'."
   },
   {
-    player: "Who is to be blamed for this?",
+    player: "Why share your story now?",
     identity:
-      "Who of course! The government, the military, the U.S! They were all complicit. But I also must blame us intellectuals. We were too passive, too afraid to speak out.",
-  },
+      "Because silence protects the oppressors. Speaking the truth honors those who suffered."
+  }
 ];
 
-export default function GwangjuDialogue({ onGuess, onExit }) {
+export default function ComfortWomenDialogue({ onGuess, onExit }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [currentLine, setCurrentLine] = useState(0);
   const [typingText, setTypingText] = useState("");
@@ -40,64 +41,53 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // Typewriter effect for the current identity line
   useEffect(() => {
     setForceNormalSpeed(false);
     if (!isTyping && currentLine < dialogueScript.length) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true },
+        { speaker: "identity", text: "", isOriginal: true }
       ]);
       setTypingText("");
       setCharIndex(0);
       setIsTyping(true);
-      setFastForward(false);
     }
   }, [currentLine]);
 
   useEffect(() => {
     if (!isTyping && outOfLines && !hasWon && !hintTyping && !isWaiting) {
-      setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm talking about?",
-        },
+          text: "Enough... why can't you understand what I'm talking about?"
+        }
       ]);
-      setFastForward(false);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      // setFastForward(false);
-      const timeout = setTimeout(
-        () => {
-          const nextChar = dialogueScript[currentLine][charIndex];
-          setTypingText((prev) => prev + nextChar);
-          setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(() => {
+        const nextChar = dialogueScript[currentLine][charIndex];
+        setTypingText((prev) => prev + nextChar);
+        setCharIndex((prev) => prev + 1);
 
-          // Update the last identity message in the chat history as it types
-          setChatHistory((prev) => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              speaker: "identity",
-              text: typingText + nextChar,
-              isOriginal: true,
-            };
-            return updated;
-          });
-        },
-        forceNormalSpeed ? 20 : fastForward ? 1 : 20
-      );
-      //   setFastForward(false);
+        setChatHistory((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = {
+            speaker: "identity",
+            text: typingText + nextChar,
+            isOriginal: true
+          };
+          return updated;
+        });
+      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
       setIsTyping(false);
-      setFastForward(false);
     }
   }, [charIndex, isTyping]);
 
@@ -120,22 +110,17 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    setFastForward(false);
-    if (choice.toLowerCase() === "gwangju") {
+    if (choice.toLowerCase().includes("comfort")) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
-            "Yes... Gwangju.\n\n" +
-            "You see what so many tried to ignore. The Gwangju Uprising was not only suffering and loss, but a cry for dignity and truth. Even if the world turned its back, we did not.\n\n" +
-            "I hope Gwangju continues to inspire those who long for justice, even if I may never see that day myself.\n\n" +
-            "- Im Ch’oru, on the Gwangju movement",
+            "Yes... I was part of the Comfort Women movement.\n\n" +
+            "My testimony is not just mine. It represents thousands of women silenced by violence.\n\n" +
+            "- Lee Yong-soo, survivor and activist"
         },
-        {
-          speaker: "system",
-          text: "The conversation grows quiet.",
-        },
+        { speaker: "system", text: "The conversation grows quiet." }
       ]);
       setHasWon(true);
       onGuess(true);
@@ -144,117 +129,88 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of.",
-        },
+          text: "That is not the movement I was part of."
+        }
       ]);
     }
   };
 
   const handleHint = async () => {
-    if (hasWon || isTyping || hintTyping) return; // Block during typing
+    if (hasWon || isTyping || hintTyping) return;
 
     if (hintIndex < hints.length) {
       const nextHint = hints[hintIndex];
       setHintTyping(true);
 
-      // Player's question appears instantly
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }, // HINT speaker type
+        { speaker: "hint", text: "" }
       ]);
 
       setHintIndex(hintIndex + 1);
 
       const response = nextHint.identity;
       for (let i = 0; i < response.length; i++) {
-        await delay(20); // 1ms if fast-forwarding
+        await delay(20);
         setChatHistory((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1),
+            text: response.slice(0, i + 1)
           };
           return updated;
         });
       }
 
       setHintTyping(false);
-
       setIsWaiting(true);
       await delay(1000);
-
       if (currentLine < dialogueScript.length - 1) {
         setCurrentLine((prev) => prev + 1);
       } else {
         setOutOfLines(true);
       }
-
       setIsWaiting(false);
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." },
+        { speaker: "identity", text: "I have no more to reveal." }
       ]);
-
-      setIsWaiting(true);
-      await delay(1000);
-      if (currentLine < dialogueScript.length - 1) {
-        setCurrentLine((prev) => prev + 1);
-      } else {
-        setOutOfLines(true);
-      }
-      setIsWaiting(false);
     }
   };
 
   const submitGuess = async () => {
     if (!input.trim()) return;
-    setForceNormalSpeed(true);
     const answer = input.trim().toLowerCase();
-    setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
+    setChatHistory((prev) => [
+      ...prev,
+      { speaker: "player", text: input }
+    ]);
 
-    if (answer.includes("gwangju")) {
-      // Correct answer
+    if (answer.includes("comfort")) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
-            "Yes... Gwangju.\n\n" +
-            "You see what so many tried to ignore. The Gwangju Uprising was not only suffering and loss, but a cry for dignity and truth. Even if the world turned its back, we did not.\n\n" +
-            "I hope Gwangju continues to inspire those who long for justice, even if I may never see that day myself.\n\n" +
-            "- Im Ch’oru, on the Gwangju movement",
+            "Yes... I was part of the Comfort Women movement.\n\n" +
+            "My testimony is not just mine. It represents thousands of women silenced by violence.\n\n" +
+            "- Lee Yong-soo, survivor and activist"
         },
-        {
-          speaker: "system",
-          text: "The conversation grows quiet.",
-        },
+        { speaker: "system", text: "The conversation grows quiet." }
       ]);
-      setHasWon(true); // Disable further actions
+      setHasWon(true);
       onGuess(true);
     } else {
-      setIsWaiting(true);
-      setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of.",
-        },
+          text: "That is not the movement I was part of."
+        }
       ]);
-
-      await delay(1000);
-
-      if (currentLine < dialogueScript.length - 1) {
-        setCurrentLine((prev) => prev + 1);
-      } else {
-        setOutOfLines(true);
-      }
-
-      setIsWaiting(false);
     }
-
     setInput("");
     setShowGuessInput(false);
   };
@@ -265,61 +221,41 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
         className="bg-gray-800 text-gray-200 p-6 rounded-xl shadow-lg w-[90%] h-[90%] flex flex-col"
         onClick={() => setFastForward(true)}
       >
-        {/* Exit button */}
         <div className="flex justify-end mb-2">
           <button
             onClick={() => {
-                if (!hasWon) resetDialogue();
-                onExit();
-              }}
+              if (!hasWon) resetDialogue();
+              onExit();
+            }}
             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-gray-300 text-sm"
           >
             Exit
           </button>
         </div>
 
-        {/* Chat history */}
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) =>
-            entry.isRecord ? (
-              <div
-                key={index}
-                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
-              >
-                <div className="font-bold mb-1">{entry.text.title}</div>
-                <div className="mb-1">{entry.text.body}</div>
-                <div className="italic text-gray-400">{entry.text.footer}</div>
-              </div>
-            ) : (
-              <div
-                key={index}
-                className={`leading-snug text-lg ${
-                  entry.speaker === "identity"
-                    ? entry.isOriginal
-                      ? "text-left text-white mb-1"
-                      : "text-left text-yellow-400 mb-1"
-                    : entry.speaker === "hint"
-                    ? "text-left text-yellow-400 mb-1"
-                    : entry.speaker === "player"
-                    ? "text-right text-cyan-400 mb-1"
-                    : "text-center text-gray-400 italic mb-1"
-                }`}
-              >
-                {typeof entry.text === "string" && <span>{entry.text}</span>}
-              </div>
-            )
-          )}
+          {chatHistory.map((entry, index) => (
+            <div
+              key={index}
+              className={`leading-snug text-lg ${
+                entry.speaker === "identity"
+                  ? entry.isOriginal
+                    ? "text-left text-white mb-1"
+                    : "text-left text-yellow-400 mb-1"
+                  : entry.speaker === "hint"
+                  ? "text-left text-yellow-400 mb-1"
+                  : entry.speaker === "player"
+                  ? "text-right text-cyan-400 mb-1"
+                  : "text-center text-gray-400 italic mb-1"
+              }`}
+            >
+              {typeof entry.text === "string" && <span>{entry.text}</span>}
+            </div>
+          ))}
         </div>
 
-        {/* Action row + guess input */}
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
-          <div
-            className="
-      flex gap-4 mt-2 justify-end flex-wrap
-      transition-opacity duration-500 opacity-100 pointer-events-auto
-    "
-          >
-            {/* If guessing, show input to the left */}
+          <div className="flex gap-4 mt-2 justify-end flex-wrap">
             {showGuessInput && (
               <div className="flex gap-2 items-center">
                 <input
@@ -343,55 +279,47 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
               </div>
             )}
 
-            {/* Guess Button */}
             <button
               onClick={() => setShowGuessInput(true)}
               className="w-20 h-20 bg-red-700 hover:bg-red-800 rounded-lg flex flex-col items-center justify-center"
-              title="Make a Guess"
             >
               <FaQuestionCircle size={32} />
               <span className="text-xs">Guess</span>
             </button>
 
-            {/* Hint Button */}
             <button
               onClick={handleHint}
               className="w-20 h-20 bg-yellow-600 hover:bg-yellow-700 rounded-lg flex flex-col items-center justify-center"
-              title="Ask for Hint"
             >
               <FaLightbulb size={32} />
               <span className="text-xs">Hint</span>
             </button>
 
-            {/* Action Button */}
             <button
               onClick={async () => {
                 if (!usedSpecial) {
                   setUsedSpecial(true);
-
                   setChatHistory((prev) => [
                     ...prev,
                     {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Declassified Intelligence Report - May 1980",
-                        body: "Unrest continues in southwestern city. Civilian groups reported assembling despite military curfew. Intelligence notes participation from university student organizations and religious activists.",
-                        footer: "Defense Ministry Memo, Partial Release (1997)",
-                      },
-                    },
+                        title: "U.S. House Foreign Affairs Committee, 2007",
+                        body:
+                          "Testimony of Lee Yong-soo describing her abduction and survival as a comfort woman.",
+                        footer: "U.S. Congressional Record"
+                      }
+                    }
                   ]);
 
                   setIsWaiting(true);
                   await delay(1000);
-
-                  // ✅ Advance to next dialogue line, or loop if at the end
                   if (currentLine < dialogueScript.length - 1) {
                     setCurrentLine((prev) => prev + 1);
                   } else {
                     setOutOfLines(true);
                   }
-
                   setIsWaiting(false);
                 }
               }}
@@ -401,7 +329,6 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
                   ? "bg-gray-600 opacity-50"
                   : "bg-green-700 hover:bg-green-800"
               } rounded-lg flex flex-col items-center justify-center`}
-              title="Expose Official Records"
             >
               <FaCog size={32} />
               <span className="text-xs">Records</span>
@@ -415,17 +342,20 @@ export default function GwangjuDialogue({ onGuess, onExit }) {
               Choose what movement I was part of:
             </span>
             <div className="flex gap-4 flex-wrap">
-              {["Gwangju", "Minjung", "The Yangban", "The Korean War"].map(
-                (option) => (
-                  <button
-                    key={option}
-                    onClick={() => submitChoice(option)}
-                    className="px-4 py-2 bg-blue-700 rounded text-white hover:bg-blue-800"
-                  >
-                    {option}
-                  </button>
-                )
-              )}
+              {[
+                "Comfort Women",
+                "Student Democracy",
+                "Labor Activism",
+                "Consumer Nationalism"
+              ].map((option) => (
+                <button
+                  key={option}
+                  onClick={() => submitChoice(option)}
+                  className="px-4 py-2 bg-blue-700 rounded text-white hover:bg-blue-800"
+                >
+                  {option}
+                </button>
+              ))}
             </div>
           </div>
         )}
