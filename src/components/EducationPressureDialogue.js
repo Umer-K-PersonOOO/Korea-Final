@@ -2,24 +2,23 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "I received a letter at the beginning of the year asking me to do lunch service at my child’s school.",
-  "Not many mothers are brave enough to refuse. Declining means you don’t care about your child.",
-  "I even paid a substitute at my job so I could serve lunch at school, just so my son wouldn’t feel left out.",
-  "Some stay-at-home moms complained that working mothers weren’t doing enough.",
-  "The pressure to perform as a perfect mother is constant, and saying no can harm our children’s social standing."
+  "I once thought I was middle class. Now it seems I belong to the lower. Even small things feel out of reach ",
+  "The ████████ tell me to trust them. They say the ████████ will work. But when I ask my children what they’ve learned, they often say they can’t remember. Still, real ████████ are far too expensive. I have no choice.",
+  "Everyone says ████████ is opportunity. But it feels like a race where we can’t catch up. I dream my children might someday find a better life abroad. Even if it means struggling — at least they’d see a bigger world.",
+  "When it comes to your ████████'s future, you just do what you can. Sometimes, comparison is useless. Sacrifice has become the only constant in our lives.",
 ];
 
 const hints = [
   {
-    player: "Why couldn’t you refuse the lunch service?",
+    player: "Why keep spending if it's so hard?",
     identity:
-      "Refusing would be seen as neglecting my child, and he might be excluded socially. The pressure was overwhelming."
+      "Because everyone else does. Falling behind would mean closing the door on any future.",
   },
   {
-    player: "Is this common among parents?",
+    player: "Is it really about going abroad?",
     identity:
-      "Yes. Especially mothers. We’re expected to volunteer at school, hire tutors, and do everything to keep our kids competitive."
-  }
+      "Maybe not entirely. But the world feels too big now, and Korea too small for those who can't keep up.",
+  },
 ];
 
 export default function EducationPressureDialogue({ onGuess, onExit }) {
@@ -47,7 +46,7 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,30 +60,32 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text:
-            "Why can’t you understand the constant burden placed on us mothers?"
-        }
+          text: "Why can’t you understand the constant burden placed on us mothers?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -111,16 +112,22 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("education") || choice.toLowerCase().includes("parenting")) {
+    if (
+      choice.toLowerCase().includes("education") ||
+      choice.toLowerCase().includes("low") ||
+      choice.toLowerCase().includes("income") ||
+      choice.toLowerCase().includes("student") ||
+      choice.toLowerCase().includes("parenting")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
             "Yes... the enormous pressure placed on parents, especially mothers, in Korea’s competitive education system.\n\n" +
-            "- Cho Joo-eun, 2007"
+            "- Cho Joo-eun, 2007",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -129,8 +136,8 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the struggle I am describing."
-        }
+          text: "That is not the struggle I am describing.",
+        },
       ]);
     }
   };
@@ -145,7 +152,7 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -157,7 +164,7 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -175,7 +182,7 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -185,16 +192,20 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
     const answer = input.trim().toLowerCase();
     setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("education") || answer.includes("parent") || answer.includes("mother")) {
+    if (
+      answer.includes("education") ||
+      answer.includes("parent") ||
+      answer.includes("mother")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
             "Yes... the enormous pressure placed on parents, especially mothers, in Korea’s competitive education system.\n\n" +
-            "- Cho Joo-eun, 2007"
+            "- Cho Joo-eun, 2007",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -203,9 +214,20 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the struggle I am describing."
-        }
+          text: "That is not the struggle I am describing.",
+        },
       ]);
+      setIsWaiting(true); // <--- ADD THIS
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -230,24 +252,35 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              <span>{entry.text}</span>
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-white mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                {typeof entry.text === "string" && <span>{entry.text}</span>}
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -301,12 +334,11 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Parenting Pressure, 2007",
-                        body:
-                          "Mothers in South Korea often face social pressure to participate in school activities or risk their child’s social standing.",
-                        footer: "JoongAng Daily, 2007"
-                      }
-                    }
+                        title: "Parent Testimony, 1990s",
+                        body: "Reflections on the pressures of affording private education and the hope that children might have better opportunities abroad, despite growing economic inequality.",
+                        footer: "National Survey on Family Life, 1995",
+                      },
+                    },
                   ]);
                   setIsWaiting(true);
                   await delay(1000);
@@ -339,7 +371,7 @@ export default function EducationPressureDialogue({ onGuess, onExit }) {
                 "Education Pressure",
                 "Labor Movement",
                 "Comfort Women",
-                "Gold Campaign"
+                "Gold Campaign",
               ].map((option) => (
                 <button
                   key={option}

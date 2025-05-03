@@ -2,24 +2,29 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "At the factory, I was just 'helper #7.' My eyes stayed fixed on the machine needle to avoid getting punctured.",
-  "Even when others suffered, I couldn’t look around. My world was that needle.",
-  "But at the union... they called me Miss Shin Soon-ae. I was treated with dignity.",
-  "At the Work Classroom, I saw friends. When I helped, people thanked me.",
-  "I learned that we were being exploited. I was reborn a proud worker."
+  "I never graduated elementary school. We were too poor. So when the ████████ offered free middle school education, I went.",
+  "My eyes were always on the needle, afraid to look up. At the ███████, people called me Miss Shin Soon-ae. They treated me with dignity. I found friends and purpose.",
+  "We occupied the ████████ despite threats, police guns, and curfews. In the end, they gave in. That victory was for all of us.",
+  "But in 1981, the government shut down our ████████. I became a fugitive for two years. I was harassed and even offered bribes to betray my beliefs. I refused. Even now, our sacrifices are forgotten.██████████ and Park Chung Hee became rich, but ██████ like us received no compensation or recognition.",
+  "Today, ██████ are divided. Regular ██████ should stand with irregular ██████, but many don’t. The struggle must continue.",
 ];
 
 const hints = [
   {
-    player: "What changed for you when you joined the union?",
+    player: "What did you hope to achieve?",
     identity:
-      "I found respect. At the factory, I was a machine. At the union, I became a person."
+      "Mostly, we just wanted some control over our lives. Even a little change mattered back then.",
   },
   {
-    player: "Why didn’t you speak out earlier?",
+    player: "Was it dangerous to speak out?",
     identity:
-      "Fear. We all feared losing what little we had. But the union opened my eyes."
-  }
+      "Some people thought it wasn’t worth the risk. But I couldn’t stay silent forever.",
+  },
+  {
+    player: "How did others see your efforts?",
+    identity:
+      "At first, many ignored or feared us. Later, some began to see why we tried.",
+  },
 ];
 
 export default function ShinSoonAeDialogue({ onGuess, onExit }) {
@@ -47,7 +52,7 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +66,32 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm talking about?"
-        }
+          text: "It seems we need to spread our message further...",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -117,10 +125,11 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
           speaker: "identity",
           text:
             "Yes... Labor Activism.\n\n" +
-            "We were not machines. We were proud workers who demanded dignity.\n\n" +
-            "- Shin Soon-ae, Cheonggye union organizer"
+            "We fought not just for wages, but for dignity. We refused to be machines. Even under threats, curfews, and persecution, we stood together.\n\n" +
+            "Though our sacrifices were never fully recognized, the struggle for justice continues.\n\n" +
+            "- Shin Soon-ae, Cheonggye union organizer",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -129,9 +138,16 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
+
+      // 🔥 Advance to next line or end
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
     }
   };
 
@@ -145,7 +161,7 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -157,7 +173,7 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -175,7 +191,7 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -183,12 +199,9 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
   const submitGuess = async () => {
     if (!input.trim()) return;
     const answer = input.trim().toLowerCase();
-    setChatHistory((prev) => [
-      ...prev,
-      { speaker: "player", text: input }
-    ]);
+    setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("labor")) {
+    if (answer.includes("labor") || answer.includes("union")) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -196,9 +209,9 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
           text:
             "Yes... Labor Activism.\n\n" +
             "We were not machines. We were proud workers who demanded dignity.\n\n" +
-            "- Shin Soon-ae, Cheonggye union organizer"
+            "- Shin Soon-ae, Cheonggye union organizer",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -207,9 +220,20 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
+      setIsWaiting(true);  // <--- ADD THIS
+
+      await delay(1000);
+    
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+    
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -234,24 +258,35 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              {typeof entry.text === "string" && <span>{entry.text}</span>}
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-white mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                <span>{entry.text}</span>
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -305,12 +340,12 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Union Meeting Minutes - 1974",
-                        body:
-                          "Minutes note rising discontent among factory workers at Peace Market. Calls for fair wages, respect, and the right to organize intensify.",
-                        footer: "Cheonggye Labor Union Archive"
-                      }
-                    }
+                        title: "Workplace Compliance Memo - Late 1970s",
+                        body: "An internal report notes increasing worker absenteeism linked to off-site educational activities. Management expresses concern over potential coordination among employees.",
+                        footer:
+                          "Private Factory Archive, Pyeonghwa Market Collection",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -343,10 +378,10 @@ export default function ShinSoonAeDialogue({ onGuess, onExit }) {
             </span>
             <div className="flex gap-4 flex-wrap">
               {[
-                "Labor Activism",
+                "Union Activist",
                 "Student Democracy",
                 "Gender Equality",
-                "Consumer Nationalism"
+                "Consumer Nationalism",
               ].map((option) => (
                 <button
                   key={option}

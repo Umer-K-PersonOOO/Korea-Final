@@ -2,24 +2,20 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "Fellow Koreans, your response to our national crisis has been heroic.",
-  "Through the Gold Collection Campaign, we have gathered over $2 billion worth of gold.",
-  "Housewives gave wedding rings. Children gave amulets. All to save the nation.",
-  "Your frugality and loyalty show that economic choices are acts of patriotism.",
-  "Together, we proved that unity and sacrifice can overcome any hardship."
+  "When the ████████ struck, the ground seemed to vanish beneath us. News spoke only of ████, ████, and shame. But then came the call: if not with weapons, we would fight with what we had — our ████.",
+  "Posters and broadcasts urged ████. It became a movement crossing generations. Housewives gave ████████, elders brought ████, even children offered ████ from their allowances.",
+  "No offering was too small. I remember a widow surrendering her ████, saying, ‘If this can help, I cannot keep it.’ People wept quietly — sorrow mixed with pride.",
+  "In those moments, we were not just families or workers. We were a nation proving that unity and sacrifice could defy even the greatest crisis.",
 ];
-
 const hints = [
   {
-    player: "Why did people give their gold?",
-    identity:
-      "To help pay off the nation's debt during the financial crisis. It was a grassroots patriotic effort."
+    player: "Was it pride or pressure that made you donate?",
+    identity: "A bit of both—patriotism tastes sweet under guilt’s weight.",
   },
   {
-    player: "Was this just about money?",
-    identity:
-      "No. It was a demonstration of unity and national pride during a time of hardship."
-  }
+    player: "Did you ever doubt the campaign?",
+    identity: "Doubt whispered nightly. But the public chorus drowned it out.",
+  },
 ];
 
 export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
@@ -47,7 +43,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +57,32 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Have you not understood what this was about?"
-        }
+          text: "Did you forget the crisis we were in not too long ago?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -110,7 +109,10 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("gold") || choice.toLowerCase().includes("imf")) {
+    if (
+      choice.toLowerCase().includes("gold") ||
+      choice.toLowerCase().includes("imf")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -118,16 +120,19 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
           text:
             "Yes... the Gold Collection Campaign during the IMF Crisis.\n\n" +
             "It was not just about debt. It was about unity, pride, and the will of the people.\n\n" +
-            "- President Kim Dae-jung, 1998"
+            "- President Kim Dae-jung, 1998",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "That is not the event I am speaking of." }
+        {
+          speaker: "identity",
+          text: "That is not the crisis I am speaking of.",
+        },
       ]);
     }
   };
@@ -142,7 +147,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -154,7 +159,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -172,7 +177,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -190,17 +195,31 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
           text:
             "Yes... the Gold Collection Campaign during the IMF Crisis.\n\n" +
             "It was not just about debt. It was about unity, pride, and the will of the people.\n\n" +
-            "- President Kim Dae-jung, 1998"
+            "- President Kim Dae-jung, 1998",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "That is not the event I am speaking of." }
+        {
+          speaker: "identity",
+          text: "That is not the crisis I am speaking of.",
+        },
       ]);
+      setIsWaiting(true); // <--- ADD THIS
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -231,7 +250,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
               className={`leading-snug text-lg ${
                 entry.speaker === "identity"
                   ? entry.isOriginal
-                    ? "text-left text-white mb-1"
+                    ? "text-left text-yellow-400 mb-1"
                     : "text-left text-yellow-400 mb-1"
                   : entry.speaker === "hint"
                   ? "text-left text-yellow-400 mb-1"
@@ -296,12 +315,11 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Gold Collection Campaign, 1998",
-                        body:
-                          "Millions donated gold to help pay down Korea’s IMF debt. An act of unity and national pride.",
-                        footer: "worldhistoryde.org"
-                      }
-                    }
+                        title: "Archived Civic Poster, 1998",
+                        body: "Public appeal encouraging citizens to contribute symbolic offerings during a time of national difficulty. Messages emphasized unity and collective resilience.",
+                        footer: "National Library Collection",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -337,7 +355,7 @@ export default function GoldForTheFatherlandDialogue({ onGuess, onExit }) {
                 "Gold Collection Campaign",
                 "Student Democracy",
                 "Labor Union Movement",
-                "Comfort Women Redress"
+                "Comfort Women Redress",
               ].map((option) => (
                 <button
                   key={option}

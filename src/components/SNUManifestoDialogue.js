@@ -2,24 +2,29 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "We stormed down from the ivory tower of Truth into history’s chaos.",
-  "Our mission: to plant Reason and Truth in barren soil.",
-  "Despotism disguised itself as democracy and freedom.",
-  "But tyranny is no more than a tiger made of paper — a pretense of power.",
-  "We vowed to battle false democracy in our nation."
+  "They called us rebels, communists, traitors. But we knew we were Korea’s conscience. To fight for for the silenced — this was our duty.",
+  "No government built on violence could erase the truth we shouted from every square: dignity belongs to all, not just the powerful.",
+  "When I first entered the ████████, I thought ████████ about discovering truth. But the more I learned, the more I realized our ████████ were full of lies.",
+  "They taught us democracy existed — yet people were beaten for speaking freely. The ████████ are the people, and the people are the soul of the nation.",
+  "They taught us equality was the goal — yet ████████ collapsed while the rich lounged. I realized then that to be a true ████████ was to be a fighter.",
+  "Tear gas burned our eyes. Batons fell on our backs. Some were dragged away in the night. Some did not come back.",
 ];
 
 const hints = [
   {
-    player: "Why did you leave the university to protest?",
+    player: "What made you take action?",
     identity:
-      "Because truth demanded action. Silence would have made us complicit."
+      "At some point, seeing wrong and staying silent became impossible. I was glad that my seniors had shown me the way.",
   },
   {
-    player: "What were you fighting against?",
+    player: "Was it dangerous?",
     identity:
-      "A corrupt regime hiding behind the mask of democracy. We had to act."
-  }
+      "Yes, but fear was a price many were willing to pay for change. I also risked my relationship with my family.",
+  },
+  {
+    player: "Did you work alone?",
+    identity: "We found each other — those who still believed truth mattered.",
+  },
 ];
 
 export default function SNUManifestoDialogue({ onGuess, onExit }) {
@@ -47,7 +52,7 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +66,32 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm talking about?"
-        }
+          text: "How could you forget the people?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -110,7 +118,7 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("student")) {
+    if (choice.toLowerCase().includes("student") || choice.toLowerCase().includes("minjung") ) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -118,9 +126,9 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
           text:
             "Yes... Student Democracy Movement.\n\n" +
             "We stood against false democracy and oppression. Our fight sowed the seeds of freedom.\n\n" +
-            "- SNU April Revolution Manifesto, 1960"
+            "- SNU April Revolution Manifesto, 1960",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -129,8 +137,8 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
     }
   };
@@ -145,7 +153,7 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -157,7 +165,7 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -175,7 +183,7 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -183,12 +191,9 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
   const submitGuess = async () => {
     if (!input.trim()) return;
     const answer = input.trim().toLowerCase();
-    setChatHistory((prev) => [
-      ...prev,
-      { speaker: "player", text: input }
-    ]);
+    setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("student")) {
+    if (answer.includes("student") || answer.includes("minjung")) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -196,9 +201,9 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
           text:
             "Yes... Student Democracy Movement.\n\n" +
             "We stood against false democracy and oppression. Our fight sowed the seeds of freedom.\n\n" +
-            "- SNU April Revolution Manifesto, 1960"
+            "- SNU April Revolution Manifesto, 1960",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -207,9 +212,20 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
+      setIsWaiting(true); // <--- ADD THIS
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -234,24 +250,35 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              {typeof entry.text === "string" && <span>{entry.text}</span>}
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-yellow-400 mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                <span>{entry.text}</span>
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -305,12 +332,12 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "April 19 Student Manifesto - 1960",
-                        body:
-                          "The manifesto calls for the downfall of authoritarian rule and restoration of true democracy.",
-                        footer: "Seoul National University Archives"
-                      }
-                    }
+                        title: "Declassified Memo - March 1960",
+                        body: "Government surveillance noted growing unrest among students at Seoul National University. Flyers calling for democracy and free speech were found across campus. Authorities recommended increased patrols and intelligence gathering.",
+                        footer:
+                          "National Police Intelligence Report (Declassified 1995)",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -343,10 +370,10 @@ export default function SNUManifestoDialogue({ onGuess, onExit }) {
             </span>
             <div className="flex gap-4 flex-wrap">
               {[
-                "Student Democracy Movement",
+                "Student Minjung Movement",
                 "Labor Activism",
                 "Gender Equality",
-                "Consumer Nationalism"
+                "Consumer Nationalism",
               ].map((option) => (
                 <button
                   key={option}

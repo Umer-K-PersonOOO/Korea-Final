@@ -2,27 +2,26 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "We 2.6 million migrant workers have been left in a blind spot.",
-  "Our labor rights are not protected. We are tied to one employer no matter the conditions.",
-  "Many endure low wages, unsafe work, abuse. Speaking up risks deportation.",
-  "We are not machines for cheap labor. We are not criminals.",
-  "We are human beings and workers. We demand dignity and respect."
+  "It was not a riot, nor a communist rebellion. It was the cry of a people struggling against division and colonial rule by another name.",
+  "Farmers, fishermen, daughters, and sons longed simply to live in peace. Yet their grief and anger were silenced. Their graves remained unmarked for decades.",
+  "This tragedy was written in blood across the mountains and shores ████████. Their hopes for unity and freedom were crushed beneath boots of violence. Their names erased by fear.",
+  "No mother dared to weep for her murdered child. No son dared to honor his father’s grave. Today, we remember them not as enemies of the nation, but as its hidden foundation — the roots of our democracy.",
 ];
 
 const hints = [
   {
-    player: "Why can't you just leave unsafe jobs?",
+    player: "Why were their graves unmarked?",
     identity:
-      "Under the permit system, changing workplaces is often impossible. Speaking out risks deportation."
+      "Labels are cheap when lives are at stake.",
   },
   {
-    player: "Why do you say 'we are not criminals'?",
+    player: "Why call their cries rebellion?",
     identity:
-      "Society treats us like criminals for wanting basic rights. We are workers, not lawbreakers."
-  }
+      "No. They wanted peace and unity. The label 'communist' was used to justify violence against them.",
+  },
 ];
 
-export default function MigrantLaborDialogue({ onGuess, onExit }) {
+export default function JejuUprisingDialogue({ onGuess, onExit }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [currentLine, setCurrentLine] = useState(0);
   const [typingText, setTypingText] = useState("");
@@ -47,7 +46,7 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +60,32 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm talking about?"
-        }
+          text: "Can you not remember the cruelty put upon us?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -110,18 +112,22 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("migrant") || choice.toLowerCase().includes("labor")) {
+    if (
+      choice.toLowerCase().includes("jeju") ||
+      choice.toLowerCase().includes("4.3") ||
+      choice.toLowerCase().includes("april 3")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
-            "Yes... We are migrant workers.\n\n" +
-            "We have fought for dignity, fair labor rights, and respect.\n\n" +
-            "We are not criminals. We are human beings. Our voices will be heard.\n\n" +
-            "- Migrants’ Trade Union, 2025"
+            "Yes... The Jeju April 3rd Uprising.\n\n" +
+            "It was not rebellion. It was the scream of a people yearning for unity, peace, and dignity.\n\n" +
+            "Their pain is the seed from which Korea’s democracy must grow.\n\n" +
+            "- April 3rd Memorial Service Speech, Jeju",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -130,9 +136,19 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the event I was part of.",
+        },
       ]);
+      setIsWaiting(true);
+
+      setTimeout(() => {
+        if (currentLine < dialogueScript.length - 1) {
+          setCurrentLine((prev) => prev + 1);
+        } else {
+          setOutOfLines(true);
+        }
+        setIsWaiting(false);
+      }, 1000);
     }
   };
 
@@ -146,7 +162,7 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -158,7 +174,7 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -176,7 +192,7 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -184,23 +200,23 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
   const submitGuess = async () => {
     if (!input.trim()) return;
     const answer = input.trim().toLowerCase();
-    setChatHistory((prev) => [
-      ...prev,
-      { speaker: "player", text: input }
-    ]);
+    setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("migrant") || answer.includes("labor")) {
+    if (
+      answer.includes("jeju") ||
+      answer.includes("4.3") ||
+      answer.includes("april 3")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
           text:
-            "Yes... We are migrant workers.\n\n" +
-            "We have fought for dignity, fair labor rights, and respect.\n\n" +
-            "We are not criminals. We are human beings. Our voices will be heard.\n\n" +
-            "- Migrants’ Trade Union, 2025"
+            "Yes... The Jeju April 3rd Uprising.\n\n" +
+            "It was not rebellion. It was the scream of a people yearning for unity, peace, and dignity.\n\n" +
+            "- April 3rd Memorial Service Speech, Jeju",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -209,9 +225,18 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the event I was part of.",
+        },
       ]);
+      setIsWaiting(true);
+
+      await delay(1000);
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -236,24 +261,35 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              {typeof entry.text === "string" && <span>{entry.text}</span>}
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-white mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                {typeof entry.text === "string" && <span>{entry.text}</span>}
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -307,12 +343,11 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Migrants’ Trade Union Statement, 2025",
-                        body:
-                          "We are not machines. We are not criminals. We demand dignity and respect.",
-                        footer: "koreatimes.co.kr"
-                      }
-                    }
+                        title: "Confidential Field Report, 1949",
+                        body: "Security forces report continued unrest in southern coastal regions. Civilian assemblies observed. High command advises increased discretion in operational reports to avoid political complications.",
+                        footer: "Declassified Military Archive",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -345,10 +380,10 @@ export default function MigrantLaborDialogue({ onGuess, onExit }) {
             </span>
             <div className="flex gap-4 flex-wrap">
               {[
-                "Migrant Labor Movement",
+                "Jeju Uprising",
                 "Student Protest",
-                "Consumer Nationalism",
-                "Corporate Reform"
+                "Labor Rights Movement",
+                "Unification Movement",
               ].map((option) => (
                 <button
                   key={option}

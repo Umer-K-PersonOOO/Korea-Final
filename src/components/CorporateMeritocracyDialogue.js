@@ -2,24 +2,22 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "If you are to change, change completely. I’m not kidding. Change everything except your wife and children.",
-  "Samsung was stagnating. We had to abandon outdated traditions and complacency.",
-  "We embraced a new management style: performance, merit, and global standards over hierarchy.",
-  "Some resisted, but I told them – mediocrity has no place in Korea’s future.",
-  "This radical transformation laid the foundation for Samsung’s rise to global leadership."
+  "They say the ██████ drive Korea’s progress. But at what cost? Workers face endless hours, low wages, and constant fear of dismissal.",
+  "I’ve seen managers use scolding as 'training' and manipulate every sanction or reward to keep employees silent.",
+  "Even when the public voices concern — about land ████████ or political favoritism — the ████████ only grow larger.",
+  "To resist is risky. Speaking out could mean losing everything. But to stay silent? That’s how domination survives.",
 ];
 
 const hints = [
   {
-    player: "Why change so drastically? Wasn’t the old system working?",
+    player: "Why accept endless hours on a promise?",
     identity:
-      "The old ways led to stagnation. We needed a performance-driven culture to compete globally."
+      "Because sooner or later, you learn not to ask questions you can’t afford.",
   },
   {
-    player: "What did the reforms involve?",
-    identity:
-      "We relaxed rigid hierarchies, promoted based on merit, and pushed for global best practices."
-  }
+    player: "Can one voice really change a chaebol?",
+    identity: "Only if enough whispers form a roar.",
+  },
 ];
 
 export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
@@ -47,7 +45,7 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +59,32 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Do you not see the importance of adapting to global challenges?"
-        }
+          text: "Do you not see what is evident everywhere?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -110,16 +111,19 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("corporate") || choice.toLowerCase().includes("meritocracy") || choice.toLowerCase().includes("samsung")) {
+    if (
+      choice.toLowerCase().includes("labor") ||
+      choice.toLowerCase().includes("chaebol") ||
+      choice.toLowerCase().includes("corporate") ||
+      choice.toLowerCase().includes("meritocracy")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
-          text:
-            "Yes... Samsung’s radical corporate transformation toward meritocracy and global competitiveness.\n\n" +
-            "- Lee Kun-hee, Frankfurt Declaration 1993"
+          text: "Yes... the struggle against corporate domination and unchecked chaebŏl power. A fight not for mere reform, but for dignity and justice in the workplace and society.",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -128,8 +132,8 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the transformation I spearheaded."
-        }
+          text: "That is not what my concerns are truly about.",
+        },
       ]);
     }
   };
@@ -144,7 +148,7 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -156,7 +160,7 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -174,7 +178,7 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -184,16 +188,19 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
     const answer = input.trim().toLowerCase();
     setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("meritocracy") || answer.includes("corporate") || answer.includes("samsung")) {
+    if (
+      answer.includes("labor") ||
+      answer.includes("minjung") ||
+      answer.includes("chaebol") ||
+      answer.includes("corporate domination")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
           speaker: "identity",
-          text:
-            "Yes... Samsung’s radical corporate transformation toward meritocracy and global competitiveness.\n\n" +
-            "- Lee Kun-hee, Frankfurt Declaration 1993"
+          text: "Yes... the struggle against corporate domination and unchecked chaebŏl power. A fight not for mere reform, but for dignity and justice in the workplace and society.",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -202,9 +209,20 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the transformation I spearheaded."
-        }
+          text: "That is not what my concerns are truly about.",
+        },
       ]);
+      setIsWaiting(true);
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -229,24 +247,35 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              <span>{entry.text}</span>
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-yellow-400 mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                {typeof entry.text === "string" && <span>{entry.text}</span>}
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -300,12 +329,11 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Samsung’s Frankfurt Declaration, 1993",
-                        body:
-                          "Lee Kun-hee urged radical reform to make Samsung a global leader. Outdated traditions were replaced with merit-based performance systems.",
-                        footer: "Reuters, Frankfurt, 1993"
-                      }
-                    }
+                        title: "Social Attitudes Report — 1998",
+                        body: "A majority of respondents reported adapting to hierarchical environments where questioning authority was seen as disruptive. Common concerns included balancing loyalty with personal well-being.",
+                        footer: "Korean Society Research Council",
+                      },
+                    },
                   ]);
                   setIsWaiting(true);
                   await delay(1000);
@@ -338,7 +366,7 @@ export default function CorporateMeritocracyDialogue({ onGuess, onExit }) {
                 "Corporate Meritocracy",
                 "Education Pressure",
                 "Labor Movement",
-                "Minjung"
+                "Minjung",
               ].map((option) => (
                 <button
                   key={option}

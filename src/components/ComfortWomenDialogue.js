@@ -2,24 +2,23 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "I thank you for giving me this chance to share my anger, my shame.",
-  "Sometimes I am still that 14-year-old girl taken by soldiers in the night.",
-  "They beat me unconscious. I awoke on a ship with 300 soldiers.",
-  "I fought, but I was silenced. I was covered in blood and fear.",
-  "This story is not just mine. It belongs to all who were violated and silenced."
+  "The ████████ may have dragged us away, but it was Korea that left us forgotten. After liberation, no one wanted to hear about ████ like me. They called us names — said we were shameful, that we must have deserved it somehow.",
+  "I spent decades hiding my past because my own country refused to see me. We asked for an apology, and politicians told us to be quiet — that we were embarrassing the nation.",
+  "We asked for justice, and they gave us handshakes and speeches but no real change. Even when the world began to listen, our own leaders signed deals over our heads, using our pain like a bargaining chip.",
+  "I survived hell. I came home only to be shamed into silence. If Korea truly wants to honor the minjung — the ordinary people who suffered — then they must remember that ██████ like me are part of that story too.",
 ];
 
 const hints = [
   {
-    player: "Who hurt you?",
+    player: "Why did you hide your past for so long?",
     identity:
-      "Japanese soldiers. They took me when I was just a child. We were called 'comfort women'."
+      "Because people said my suffering brought shame. We had so little power of own from a time in which Korea had no power to iteslf. I feared even my family would turn away from me.",
   },
   {
-    player: "Why share your story now?",
+    player: "Did anyone support your call for justice?",
     identity:
-      "Because silence protects the oppressors. Speaking the truth honors those who suffered."
-  }
+      "Some did — brave students, a few journalists. But the powerful treated us as burdens or political obstacles. And countries believed that money could erase our pain.",
+  },
 ];
 
 export default function ComfortWomenDialogue({ onGuess, onExit }) {
@@ -47,7 +46,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +60,32 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm talking about?"
-        }
+          text: "Have you to have forgotten my horrors?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -118,9 +120,9 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
           text:
             "Yes... I was part of the Comfort Women movement.\n\n" +
             "My testimony is not just mine. It represents thousands of women silenced by violence.\n\n" +
-            "- Lee Yong-soo, survivor and activist"
+            "- Lee Yong-soo, survivor and activist",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -129,8 +131,8 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
     }
   };
@@ -145,7 +147,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -157,7 +159,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -175,7 +177,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -183,10 +185,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
   const submitGuess = async () => {
     if (!input.trim()) return;
     const answer = input.trim().toLowerCase();
-    setChatHistory((prev) => [
-      ...prev,
-      { speaker: "player", text: input }
-    ]);
+    setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
     if (answer.includes("comfort")) {
       setChatHistory((prev) => [
@@ -196,9 +195,9 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
           text:
             "Yes... I was part of the Comfort Women movement.\n\n" +
             "My testimony is not just mine. It represents thousands of women silenced by violence.\n\n" +
-            "- Lee Yong-soo, survivor and activist"
+            "- Lee Yong-soo, survivor and activist",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -207,9 +206,20 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the movement I was part of."
-        }
+          text: "That is not the movement I was part of.",
+        },
       ]);
+      setIsWaiting(true); // <--- ADD THIS
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -234,24 +244,35 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              {typeof entry.text === "string" && <span>{entry.text}</span>}
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-white mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                {typeof entry.text === "string" && <span>{entry.text}</span>}
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -305,12 +326,12 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "U.S. House Foreign Affairs Committee, 2007",
-                        body:
-                          "Testimony of Lee Yong-soo describing her abduction and survival as a comfort woman.",
-                        footer: "U.S. Congressional Record"
-                      }
-                    }
+                        title:
+                          "Confidential Memo - Women's Affairs Committee, 1992",
+                        body: "Recent testimonies by elderly women regarding past wartime abuses have sparked public attention. Officials advise measured response to avoid international diplomatic strain.",
+                        footer: "Ministry Correspondence Archive",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -346,7 +367,7 @@ export default function ComfortWomenDialogue({ onGuess, onExit }) {
                 "Comfort Women",
                 "Student Democracy",
                 "Labor Activism",
-                "Consumer Nationalism"
+                "Consumer Nationalism",
               ].map((option) => (
                 <button
                   key={option}

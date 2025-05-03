@@ -2,24 +2,22 @@ import { useState, useEffect } from "react";
 import { FaQuestionCircle, FaLightbulb, FaCog } from "react-icons/fa";
 
 const dialogueScript = [
-  "Extraordinary measures are necessary to safeguard our nation.",
-  "National unity is paramount in the face of the North Korean communist threat.",
-  "Dissent and disorder only serve the enemy. Criticizing the Constitution is prohibited.",
-  "We cannot allow agitators to undermine our freedom.",
-  "Harsh though it may seem, this crackdown is to protect democracy from Red infiltration."
+  "Our Republic stands at a crossroads. Threats gather not just beyond our borders, but within — disguised as students, workers, even journalists. They agitate, spreading disorder in hopes of weakening our unity.",
+  "Freedom without order is an illusion. To safeguard democracy, firm action is necessary. A house divided cannot stand; neither can a nation divided resist those who wish to see it fall.",
+  "The youth must not be swayed by slogans of chaos. Laborers must reject those who would destroy the very industries that sustain them. Disorder will be met with swift response.",
+  "Unity, discipline, and the labor of the people are our shield. Vigilance is not fear, and sacrifice is not oppression. These are the price of national survival.",
 ];
 
 const hints = [
   {
-    player: "Isn't free speech important in a democracy?",
+    player: "Why target students and workers?",
     identity:
-      "Free speech is dangerous when it aids our enemies. We must prioritize unity over chaos."
+      "Because enemies hide among them, using noble causes as cover for subversion.",
   },
   {
-    player: "Why ban criticism of the government?",
-    identity:
-      "Criticism weakens national morale. During wartime threats, unity must come before dissent."
-  }
+    player: "Isn’t harsh control dangerous for democracy?",
+    identity: "Control is not oppression. It is the defense of freedom itself.",
+  },
 ];
 
 export default function ParkChungHeeDialogue({ onGuess, onExit }) {
@@ -47,7 +45,7 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
       setFastForward(false);
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "", isOriginal: true }
+        { speaker: "identity", text: "", isOriginal: true },
       ]);
       setTypingText("");
       setCharIndex(0);
@@ -61,29 +59,32 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "Enough... why can't you understand what I'm trying to say?"
-        }
+          text: "How can you not know who I am?",
+        },
       ]);
     }
   }, [outOfLines, isTyping, hasWon, hintTyping, isWaiting]);
 
   useEffect(() => {
     if (isTyping && charIndex < dialogueScript[currentLine]?.length) {
-      const timeout = setTimeout(() => {
-        const nextChar = dialogueScript[currentLine][charIndex];
-        setTypingText((prev) => prev + nextChar);
-        setCharIndex((prev) => prev + 1);
+      const timeout = setTimeout(
+        () => {
+          const nextChar = dialogueScript[currentLine][charIndex];
+          setTypingText((prev) => prev + nextChar);
+          setCharIndex((prev) => prev + 1);
 
-        setChatHistory((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            speaker: "identity",
-            text: typingText + nextChar,
-            isOriginal: true
-          };
-          return updated;
-        });
-      }, forceNormalSpeed ? 20 : fastForward ? 1 : 20);
+          setChatHistory((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              speaker: "identity",
+              text: typingText + nextChar,
+              isOriginal: true,
+            };
+            return updated;
+          });
+        },
+        forceNormalSpeed ? 20 : fastForward ? 1 : 20
+      );
 
       return () => clearTimeout(timeout);
     } else if (isTyping && charIndex >= dialogueScript[currentLine]?.length) {
@@ -110,7 +111,10 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
   const submitChoice = (choice) => {
     setForceNormalSpeed(true);
     setChatHistory((prev) => [...prev, { speaker: "player", text: choice }]);
-    if (choice.toLowerCase().includes("emergency") || choice.toLowerCase().includes("park")) {
+    if (
+      choice.toLowerCase().includes("emergency") ||
+      choice.toLowerCase().includes("park")
+    ) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -119,9 +123,9 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
             "Yes... Emergency Rule under Park Chung-hee.\n\n" +
             "Freedom must be sacrificed when national survival is at stake.\n\n" +
             "In the face of communism, unity and order were our strongest weapons.\n\n" +
-            "- Park Chung-hee, 1975"
+            "- Park Chung-hee, 1975",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -130,8 +134,8 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the situation I am describing."
-        }
+          text: "No, that is not me.",
+        },
       ]);
     }
   };
@@ -146,7 +150,7 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
       setChatHistory((prev) => [
         ...prev,
         { speaker: "player", text: nextHint.player },
-        { speaker: "hint", text: "" }
+        { speaker: "hint", text: "" },
       ]);
 
       setHintIndex(hintIndex + 1);
@@ -158,7 +162,7 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
           const updated = [...prev];
           updated[updated.length - 1] = {
             speaker: "hint",
-            text: response.slice(0, i + 1)
+            text: response.slice(0, i + 1),
           };
           return updated;
         });
@@ -176,7 +180,7 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
     } else {
       setChatHistory((prev) => [
         ...prev,
-        { speaker: "identity", text: "I have no more to reveal." }
+        { speaker: "identity", text: "I have no more to reveal." },
       ]);
     }
   };
@@ -186,7 +190,7 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
     const answer = input.trim().toLowerCase();
     setChatHistory((prev) => [...prev, { speaker: "player", text: input }]);
 
-    if (answer.includes("emergency") || answer.includes("park")) {
+    if (answer.includes("emergency") || answer.includes("park") || answer.includes("chung") || answer.includes("hee")) {
       setChatHistory((prev) => [
         ...prev,
         {
@@ -195,9 +199,9 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
             "Yes... Emergency Rule under Park Chung-hee.\n\n" +
             "Freedom must be sacrificed when national survival is at stake.\n\n" +
             "In the face of communism, unity and order were our strongest weapons.\n\n" +
-            "- Park Chung-hee, 1975"
+            "- Park Chung-hee, 1975",
         },
-        { speaker: "system", text: "The conversation grows quiet." }
+        { speaker: "system", text: "The conversation grows quiet." },
       ]);
       setHasWon(true);
       onGuess(true);
@@ -206,9 +210,20 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
         ...prev,
         {
           speaker: "identity",
-          text: "That is not the situation I am describing."
-        }
+          text: "No, that is not me.",
+        },
       ]);
+      setIsWaiting(true); // <--- ADD THIS
+
+      await delay(1000);
+
+      if (currentLine < dialogueScript.length - 1) {
+        setCurrentLine((prev) => prev + 1);
+      } else {
+        setOutOfLines(true);
+      }
+
+      setIsWaiting(false);
     }
     setInput("");
     setShowGuessInput(false);
@@ -233,24 +248,35 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
         </div>
 
         <div className="overflow-y-auto pr-4 mb-1 max-h-[70vh]">
-          {chatHistory.map((entry, index) => (
-            <div
-              key={index}
-              className={`leading-snug text-lg ${
-                entry.speaker === "identity"
-                  ? entry.isOriginal
-                    ? "text-left text-white mb-1"
-                    : "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "hint"
-                  ? "text-left text-yellow-400 mb-1"
-                  : entry.speaker === "player"
-                  ? "text-right text-cyan-400 mb-1"
-                  : "text-center text-gray-400 italic mb-1"
-              }`}
-            >
-              {typeof entry.text === "string" && <span>{entry.text}</span>}
-            </div>
-          ))}
+          {chatHistory.map((entry, index) =>
+            entry.isRecord ? (
+              <div
+                key={index}
+                className="border border-gray-600 bg-gray-700 p-3 rounded mb-2 text-sm text-gray-300"
+              >
+                <div className="font-bold mb-1">{entry.text.title}</div>
+                <div className="mb-1">{entry.text.body}</div>
+                <div className="italic text-gray-400">{entry.text.footer}</div>
+              </div>
+            ) : (
+              <div
+                key={index}
+                className={`leading-snug text-lg ${
+                  entry.speaker === "identity"
+                    ? entry.isOriginal
+                      ? "text-left text-yellow-400 mb-1"
+                      : "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "hint"
+                    ? "text-left text-yellow-400 mb-1"
+                    : entry.speaker === "player"
+                    ? "text-right text-cyan-400 mb-1"
+                    : "text-center text-gray-400 italic mb-1"
+                }`}
+              >
+                {typeof entry.text === "string" && <span>{entry.text}</span>}
+              </div>
+            )
+          )}
         </div>
 
         {!isTyping && !hintTyping && !isWaiting && !hasWon && !outOfLines && (
@@ -304,12 +330,11 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
                       speaker: "system",
                       isRecord: true,
                       text: {
-                        title: "Emergency Measure No.9",
-                        body:
-                          "Dissent and disorder only serve the communist enemy. National unity must be maintained.",
-                        footer: "factsanddetails.com"
-                      }
-                    }
+                        title: "Presidential Address Draft, 1974",
+                        body: "Speech outlines the necessity of national unity and firm action against internal disruption. Emphasizes vigilance, labor, and discipline as foundations of security.",
+                        footer: "Confidential Staff Memorandum",
+                      },
+                    },
                   ]);
 
                   setIsWaiting(true);
@@ -342,10 +367,10 @@ export default function ParkChungHeeDialogue({ onGuess, onExit }) {
             </span>
             <div className="flex gap-4 flex-wrap">
               {[
-                "Emergency Rule",
-                "Student Protest",
-                "Migrant Labor Movement",
-                "Comfort Women Testimony"
+                "Park Chung-hee",
+                "Syngman Rhee",
+                "Yoon Suk-yeol",
+                "Kim Dae-jung ",
               ].map((option) => (
                 <button
                   key={option}
